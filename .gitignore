@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+# bases brutas não vão para o repositório (licença e tamanho)
+dados/brutos/*
+!dados/brutos/LEIA-ME.md
+
+# pastas temporárias
+_to_delete*/
