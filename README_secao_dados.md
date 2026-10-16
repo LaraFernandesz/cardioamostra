@@ -4,11 +4,9 @@
 
 | Base | Pacientes | Com doença | Licença | Fonte |
 |---|---|---|---|---|
-| Personal Key Indicators of Heart Disease (BRFSS 2020) | 301.717 (após remover 18.078 duplicatas) | 9,04% (≈ 10:1) | ver página do Kaggle* | [Kaggle – K. Pytlak](https://www.kaggle.com/datasets/kamilpytlak/personal-key-indicators-of-heart-disease) |
+| Personal Key Indicators of Heart Disease (BRFSS 2020) | 301.717 (após remover 18.078 duplicatas) | 9,04% (≈ 10:1) | [CC0 1.0 (domínio público)](https://creativecommons.org/publicdomain/zero/1.0/) | [Kaggle – K. Pytlak](https://www.kaggle.com/datasets/kamilpytlak/personal-key-indicators-of-heart-disease) |
 | Heart Failure Clinical Records | 299 | 32,1% de óbitos | CC BY 4.0 | [UCI ML Repository, id 519](https://archive.ics.uci.edu/dataset/519/heart+failure+clinical+records) |
 | Heart Disease – Cleveland | 303 | 45,9% (controle quase equilibrado) | CC BY 4.0 | [UCI ML Repository, id 45](https://archive.ics.uci.edu/dataset/45/heart+disease) |
-
-\* Conferir e anotar aqui a licença exibida na página do Kaggle.
 
 **Citações**
 
