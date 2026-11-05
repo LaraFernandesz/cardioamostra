@@ -32,7 +32,7 @@ tests/               pytest
 | Pessoa | Papel | Status |
 |---|---|---|
 | 1 | Dados (Fases 0 e 1) | `dados.py`, testes e notebook exploratório prontos |
-| 2 | Experimentos (Fases 2 e 3) | |
+| 2 | Experimentos (Fases 2 e 3) | `estrategias.py`, `experimento.py`, `scripts/rodar_experimentos.py` e testes prontos (inclui o anti-vazamento) |
 | 3 | Análise e calibração (Fase 4) | |
 | 4 | Painel (Fase 5) | |
 | 5 | Coordenação, qualidade e comunicação (Fases 0 e 6) | |
@@ -45,3 +45,4 @@ tests/               pytest
 4. Rode `python -m pytest` e `ruff check .` antes de pedir revisão.
 
 <!-- Seção das bases: ver README_secao_dados.md (Pessoa 1), a ser incorporada aqui. -->
+<!-- Seção do protocolo: ver README_secao_experimentos.md (Pessoa 2), a ser incorporada aqui. -->
