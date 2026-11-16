@@ -1,0 +1,9 @@
+modelo;variante;recall;prob_doentes_reais_teste;prob_sinteticos_treino;sinteticos_com_valor_impossivel
+gradient_boosting;nenhuma;0,099;0,239;;
+regressao_logistica;nenhuma;0,104;0,24;;
+gradient_boosting;sobreamostragem;0,721;0,615;;
+regressao_logistica;sobreamostragem;0,778;0,67;;
+gradient_boosting;smote;0,12;0,269;0,979;0,99
+regressao_logistica;smote;0,77;0,672;0,68;0,99
+gradient_boosting;smote_arredondado;0,708;0,612;0,737;0,0
+regressao_logistica;smote_arredondado;0,777;0,67;0,675;0,0

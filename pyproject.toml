@@ -9,13 +9,21 @@ dependencies = [
     "numpy>=1.24",
     "scikit-learn>=1.4",
     "imbalanced-learn>=0.14",
-    "matplotlib>=3.7",
     "plotly>=5.18",
-    "streamlit>=1.40",
+    "streamlit>=1.50",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "ruff>=0.5", "mypy>=1.10", "jupyter", "nbconvert", "ucimlrepo", "kaggle"]
+dev = [
+    "matplotlib>=3.7",
+    "pytest>=8",
+    "ruff>=0.5",
+    "mypy>=1.10",
+    "jupyter",
+    "nbconvert",
+    "ucimlrepo",
+    "kaggle",
+]
 
 [build-system]
 requires = ["setuptools>=68"]

@@ -11,3 +11,9 @@ dados/brutos/*
 
 # pastas temporárias
 _to_delete*/
+
+# pacote instalado em modo editável
+*.egg-info/
+
+# predições do baseline (BRFSS completa, ~6 MB): refeitas por scripts/refazer_tudo.py
+resultados/predicoes_baseline.parquet
