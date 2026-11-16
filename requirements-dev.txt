@@ -7,4 +7,6 @@ jupyter
 nbconvert
 ucimlrepo
 kaggle
+markdown
+playwright
 -e .

@@ -12,7 +12,7 @@ from pathlib import Path
 import comum
 import streamlit as st
 
-PASTA = Path(__file__).parent
+PASTA = Path(__file__).resolve().parent
 
 st.set_page_config(
     page_title="CardioAmostra",

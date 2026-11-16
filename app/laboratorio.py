@@ -231,7 +231,9 @@ with direita, st.container(border=True):
             "border-radius:4px;padding:10px 12px'>O <b>ajuste de limiar</b> chega a recall de "
             f"{numero(limiar['recall'], 2)} com Brier de {numero(limiar['brier'], 3)}.</p>"
         )
-    st.page_link(Path(__file__).parent / "comparativo.py", label="Comparar as 7 técnicas →")
+    st.page_link(
+        Path(__file__).resolve().parent / "comparativo.py", label="Comparar as 7 técnicas →"
+    )
 
 
 # --------------------------------------------------------- 1.000 pessoas ----

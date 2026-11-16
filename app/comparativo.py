@@ -26,7 +26,7 @@ comum.rodape_lateral()
 st.title("Mesmo recall, probabilidades diferentes")
 st.html(f"<p class='ca-lead'>{resumo_comparativo(tabela, base, modelo)}</p>")
 
-esquerda, direita = st.columns([1.5, 1], gap="medium")
+esquerda, direita = st.columns([1.6, 1], gap="medium")
 
 # ------------------------------------------------------------- ranking ----
 r = ranking(tabela, base, modelo, metrica)
@@ -85,32 +85,26 @@ with esquerda, st.container(border=True):
     )
     if botao.button("Abrir", width="stretch"):
         comum.escolher("estrategia", escolhida)
-        st.switch_page(Path(__file__).parent / "laboratorio.py")
+        st.switch_page(Path(__file__).resolve().parent / "laboratorio.py")
 
 
 # ---------------------------------------------------------- calibração ----
-CORES_CURVAS = {
-    "nenhuma": COR["bom"],
-    "pesos": "#586178",
-    "subamostragem": "#0E7490",
-    "sobreamostragem": "#6D28D9",
-    "smote": COR["ruim"],
-    "smote_tomek": "#C2410C",
-}
-NOMES_CURVAS = {
-    "nenhuma": "Nenhuma e limiar",
-    **{k: ESTRATEGIAS[k].nome for k in CORES_CURVAS if k != "nenhuma"},
-}
+# Duas curvas por vez: a referência e uma técnica. Azul e laranja passam no
+# validador de daltonismo (o verde e o laranja das telas de referência, não).
+COR_REFERENCIA, COR_TECNICA = "#2a78d6", "#eb6834"
+CORRIGEM = ["smote", "smote_tomek", "subamostragem", "sobreamostragem", "pesos"]
 
 with direita, st.container(border=True):
     st.subheader("Calibração", anchor=False)
-    mostrar = st.multiselect(
-        "Técnicas no gráfico",
-        list(CORES_CURVAS),
-        default=["nenhuma", "smote", "subamostragem"],
-        format_func=NOMES_CURVAS.get,
-        label_visibility="collapsed",
+    tecnica = st.selectbox(
+        "Comparar nenhuma correção com",
+        CORRIGEM,
+        format_func=lambda c: ESTRATEGIAS[c].nome,
     )
+    mostrar = {
+        "nenhuma": ("Nenhuma e limiar", COR_REFERENCIA),
+        tecnica: (ESTRATEGIAS[tecnica].nome, COR_TECNICA),
+    }
     filtro = (curvas["base"] == base) & (curvas["modelo"] == modelo)
     mais_gente = float(curvas.loc[filtro, "pessoas"].max())
     fig = go.Figure()
@@ -124,23 +118,42 @@ with direita, st.container(border=True):
             hoverinfo="skip",
         )
     )
-    for chave in mostrar:
+    for chave, (nome, cor) in mostrar.items():
         c = curvas[filtro & (curvas["estrategia"] == chave)]
         fig.add_trace(
             go.Scatter(
                 x=c["prevista"],
                 y=c["observada"],
                 mode="lines+markers",
-                name=NOMES_CURVAS[chave],
-                line={"color": CORES_CURVAS[chave], "width": 2.4},
+                name=nome,
+                line={"color": cor, "width": 2},
                 # ponto maior = mais pessoas na faixa (faixas pequenas oscilam mais)
-                marker={"size": (5 + 11 * (c["pessoas"] / mais_gente) ** 0.5).tolist()},
+                marker={
+                    "size": (8 + 10 * (c["pessoas"] / mais_gente) ** 0.5).tolist(),
+                    "line": {"color": COR["fundo"], "width": 2},
+                },
                 customdata=c[["pessoas"]],
                 hovertemplate=(
                     "previsto %{x:.2f} · observado %{y:.2f}<br>%{customdata[0]} pessoas"
-                    "<extra>" + NOMES_CURVAS[chave] + "</extra>"
+                    "<extra>" + nome + "</extra>"
                 ),
             )
+        )
+        # rótulo direto no meio da curva (perto de 0,5 previsto), onde as duas se
+        # afastam: a referência acima e à esquerda, a técnica abaixo e à direita
+        meio = c.loc[(c["prevista"] - 0.5).abs().idxmin()]
+        referencia = chave == "nenhuma"
+        fig.add_annotation(
+            x=meio["prevista"],
+            y=meio["observada"],
+            text=nome,
+            showarrow=False,
+            xanchor="right" if referencia else "left",
+            yanchor="bottom" if referencia else "top",
+            xshift=-8 if referencia else 8,
+            yshift=6 if referencia else -6,
+            font={"color": COR["texto"], "size": 12},
+            bgcolor="rgba(255,251,250,0.85)",
         )
     comum.papel_ecg(fig, 400, 0.25, 0.25)
     fig.update_xaxes(title="Probabilidade prevista", range=[0, 1])

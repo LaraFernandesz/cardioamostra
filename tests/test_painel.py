@@ -60,6 +60,10 @@ def test_comparativo_abre_e_ordena():
     for metrica in at.sidebar.selectbox[2].options:
         at.sidebar.selectbox[2].set_value(metrica).run()
         assert not at.exception
+    comparar = next(s for s in at.selectbox if s.label.startswith("Comparar"))
+    for tecnica in comparar.options:
+        comparar.set_value(tecnica).run()
+        assert not at.exception
 
 
 def test_escolha_da_base_vale_nas_duas_telas():
