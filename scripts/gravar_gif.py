@@ -4,8 +4,8 @@
     python scripts/gravar_gif.py                                          # em outro
 
 Precisa de Playwright (pip install playwright; usa o Chrome instalado) e do
-ffmpeg no PATH. Percorre as telas como uma pessoa faria e converte o vídeo em
-GIF de cerca de 25 segundos.
+ffmpeg no PATH. Percorre as telas como uma pessoa faria, tirando capturas de
+tela em sequência, e monta um GIF de cerca de 25 segundos.
 """
 
 from __future__ import annotations
@@ -14,24 +14,43 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parents[1]
 URL = "http://localhost:8599"
 LARGURA, ALTURA = 1280, 800
+QUADROS_POR_SEGUNDO = 5
 
 
-def esperar(pagina) -> None:
-    pagina.wait_for_selector("h1", timeout=60000)
-    pagina.wait_for_timeout(400)
-    for _ in range(40):
-        if pagina.locator("[data-testid='stStatusWidget']").count() == 0:
-            break
-        pagina.wait_for_timeout(250)
-    pagina.wait_for_timeout(900)
+class Gravador:
+    """Tira uma captura a cada 1/QUADROS_POR_SEGUNDO segundo enquanto a tela "descansa"."""
+
+    def __init__(self, pagina, pasta: Path) -> None:
+        self.pagina, self.pasta, self.n = pagina, pasta, 0
+
+    def quadro(self) -> None:
+        self.pagina.screenshot(path=str(self.pasta / f"q{self.n:04d}.png"))
+        self.n += 1
+
+    def pausar(self, segundos: float) -> None:
+        intervalo = 1 / QUADROS_POR_SEGUNDO
+        for _ in range(max(1, round(segundos * QUADROS_POR_SEGUNDO))):
+            inicio = time.perf_counter()
+            self.quadro()
+            time.sleep(max(0.0, intervalo - (time.perf_counter() - inicio)))
+
+    def esperar_tela(self) -> None:
+        """Grava enquanto o Streamlit recalcula, até a página ficar parada."""
+        self.pagina.wait_for_selector("h1", timeout=60000)
+        for _ in range(40):
+            self.pausar(0.2)
+            if self.pagina.locator("[data-testid='stStatusWidget']").count() == 0:
+                break
+        self.pausar(0.6)
 
 
-def gravar(pasta: Path) -> Path:
+def gravar(pasta: Path) -> int:
     from playwright.sync_api import sync_playwright
 
     with sync_playwright() as p:
@@ -39,40 +58,29 @@ def gravar(pasta: Path) -> Path:
             navegador = p.chromium.launch(channel="chrome")
         except Exception:
             navegador = p.chromium.launch()
-        contexto = navegador.new_context(
-            viewport={"width": LARGURA, "height": ALTURA},
-            record_video_dir=str(pasta),
-            record_video_size={"width": LARGURA, "height": ALTURA},
-        )
-        pagina = contexto.new_page()
+        pagina = navegador.new_page(viewport={"width": LARGURA, "height": ALTURA})
         pagina.goto(URL)
-        esperar(pagina)
-        pagina.wait_for_timeout(1500)
+        pagina.wait_for_selector(".js-plotly-plot .main-svg", timeout=60000)
+        g = Gravador(pagina, pasta)
+        g.esperar_tela()
+        g.pausar(2.0)
 
         for tecnica in ("Nenhuma correção", "SMOTE", "Subamostragem aleatória", "Ajuste de limiar"):
             pagina.get_by_text(tecnica, exact=True).first.click()
-            esperar(pagina)
-            pagina.wait_for_timeout(1800)
+            g.esperar_tela()
+            g.pausar(2.2)
 
         pagina.get_by_role("link", name="Comparativo").first.click()
-        esperar(pagina)
-        pagina.wait_for_timeout(3000)
-
-        pagina.mouse.wheel(0, 350)
-        pagina.wait_for_timeout(2500)
-        pagina.mouse.wheel(0, -350)
-        pagina.wait_for_timeout(800)
+        g.esperar_tela()
+        g.pausar(4.0)
 
         pagina.get_by_role("combobox").first.click()
-        pagina.wait_for_timeout(600)
+        g.pausar(0.8)
         pagina.get_by_role("option", name="Insuficiência cardíaca").click()
-        esperar(pagina)
-        pagina.wait_for_timeout(3000)
-
-        video = Path(pagina.video.path())
-        contexto.close()
+        g.esperar_tela()
+        g.pausar(3.5)
         navegador.close()
-    return video
+    return g.n
 
 
 def main() -> int:
@@ -81,22 +89,25 @@ def main() -> int:
         return 2
     destino = RAIZ / "figuras" / "demo.gif"
     with tempfile.TemporaryDirectory() as tmp:
-        video = gravar(Path(tmp))
-        paleta = Path(tmp) / "paleta.png"
-        filtro = "fps=8,scale=960:-1:flags=lanczos"
+        pasta = Path(tmp)
+        quadros = gravar(pasta)
+        entrada = ["-framerate", str(QUADROS_POR_SEGUNDO), "-i", str(pasta / "q%04d.png")]
+        escala = "scale=960:-1:flags=lanczos"
+        paleta = pasta / "paleta.png"
         subprocess.run(
-            ["ffmpeg", "-y", "-loglevel", "error", "-ss", "1.5", "-i", str(video),
-             "-vf", f"{filtro},palettegen=stats_mode=diff", str(paleta)],
+            ["ffmpeg", "-y", "-loglevel", "error", *entrada,
+             "-vf", f"{escala},palettegen=stats_mode=diff", str(paleta)],
             check=True,
         )
         subprocess.run(
-            ["ffmpeg", "-y", "-loglevel", "error", "-ss", "1.5", "-i", str(video),
-             "-i", str(paleta), "-lavfi",
-             f"{filtro}[x];[x][1:v]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle",
-             str(destino)],
+            ["ffmpeg", "-y", "-loglevel", "error", *entrada, "-i", str(paleta),
+             "-lavfi", f"{escala}[x];[x][1:v]paletteuse=dither=bayer:bayer_scale=5"
+             ":diff_mode=rectangle", str(destino)],
             check=True,
         )
-    print(f"GIF gravado em {destino} ({destino.stat().st_size / 1e6:.1f} MB)")
+    segundos = quadros / QUADROS_POR_SEGUNDO
+    tamanho = destino.stat().st_size / 1e6
+    print(f"GIF gravado em {destino}: {quadros} quadros, {segundos:.0f} s, {tamanho:.1f} MB")
     return 0
 
 

@@ -248,6 +248,9 @@ h1 {{ font-weight: 800 !important; letter-spacing: -0.02em; }}
 h2, h3 {{ font-weight: 700 !important; }}
 .stApp, .stMarkdown, td, th {{ font-variant-numeric: tabular-nums; }}
 .ca-lead {{ color: {COR["texto2"]}; max-width: 72ch; margin-top: -0.5rem; }}
+/* margens menores para as duas colunas caberem numa tela de notebook (1280 px) */
+[data-testid="stMainBlockContainer"] {{ padding-left: 2rem; padding-right: 2rem;
+  padding-top: 3rem; }}
 .ca-rotulo {{ font-size: 12px; color: {COR["texto2"]}; }}
 </style>
 """

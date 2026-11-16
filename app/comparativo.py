@@ -35,7 +35,7 @@ brier_nenhuma = float(r.loc["nenhuma", "brier"])
 
 def celula_barra(valor: float, casas: int, largura: float, cor: str) -> str:
     return (
-        "<td><div style='display:flex;align-items:center;gap:8px'>"
+        "<td><div style='display:flex;align-items:center;gap:6px'>"
         f"<div style='width:{largura:.0f}px;height:8px;background:{cor};border-radius:2px'></div>"
         f"{numero(valor, casas)}</div></td>"
     )
@@ -48,19 +48,20 @@ for chave, linha in r.iterrows():
     peso = 700 if chave == "limiar" else 600
     cor_brier = COR["bom"] if linha["brier"] <= brier_nenhuma * 1.05 else COR["ruim"]
     razao = linha["razao_previsto_observado"]
+    nome = linha["tecnica"].replace(" aleatória", "")  # cabe numa tela de notebook
     linhas_html.append(
-        f"<tr style='{destaque}'><td style='font-weight:{peso}'>{linha['tecnica']}</td>"
-        + celula_barra(linha["recall"], 2, 32 * linha["recall"], COR["doente"])
+        f"<tr style='{destaque}'><td style='font-weight:{peso}'>{nome}</td>"
+        + celula_barra(linha["recall"], 2, 24 * linha["recall"], COR["doente"])
         + f"<td>{numero(linha['precisao'], 2)}</td><td>{numero(linha['roc_auc'], 2)}</td>"
-        + celula_barra(linha["brier"], 3, 32 * linha["brier"] / maior_brier, cor_brier)
+        + celula_barra(linha["brier"], 3, 24 * linha["brier"] / maior_brier, cor_brier)
         + f"<td>{numero(razao, 2)}×</td></tr>"
     )
 
 estilo_tabela = (
     "<style>.ca-rank{width:100%;border-collapse:collapse}"
     f".ca-rank th{{white-space:nowrap;text-align:left;font-size:12px;color:{COR['texto2']};"
-    f"font-weight:600;padding:8px 6px;border-bottom:1px solid {COR['borda']}}}"
-    f".ca-rank td{{white-space:nowrap;padding:10px 6px;font-size:13px;"
+    f"font-weight:600;padding:8px 4px;border-bottom:1px solid {COR['borda']}}}"
+    f".ca-rank td{{white-space:nowrap;padding:10px 4px;font-size:13px;"
     f"border-bottom:1px solid {COR['borda']}}}"
     ".ca-rolagem{overflow-x:auto}</style>"
 )
