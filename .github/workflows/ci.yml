@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  testes:
+    name: Python ${{ matrix.python }} / ${{ matrix.pandas }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # versões mínimas declaradas no pyproject (Python 3.10, pandas 2)
+          - python: "3.10"
+            pandas: "pandas<3"
+          # versões atuais
+          - python: "3.12"
+            pandas: "pandas>=3"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Instalar o pacote e as ferramentas
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e . "${{ matrix.pandas }}" pytest ruff mypy
+
+      - name: ruff
+        run: ruff check .
+
+      - name: mypy
+        run: mypy src
+
+      # As bases reais não estão no repositório: os testes de contagem são
+      # pulados e os de lógica rodam com as bases falsas de tests/conftest.py.
+      - name: pytest
+        run: pytest -q
