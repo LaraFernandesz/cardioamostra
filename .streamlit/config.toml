@@ -1,0 +1,25 @@
+# Tema das telas de referência do plano (Interface de referência).
+[theme]
+base = "light"
+primaryColor = "#B0124F"
+backgroundColor = "#FFFBFA"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#1B2236"
+linkColor = "#B0124F"
+borderColor = "#E7E0E1"
+dataframeBorderColor = "#E7E0E1"
+dataframeHeaderBackgroundColor = "#FFFBFA"
+showWidgetBorder = true
+baseRadius = "6px"
+font = "Public Sans:https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700;800&display=swap"
+
+[theme.sidebar]
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#FFFBFA"
+borderColor = "#E7E0E1"
+
+[client]
+toolbarMode = "minimal"
+
+[browser]
+gatherUsageStats = false

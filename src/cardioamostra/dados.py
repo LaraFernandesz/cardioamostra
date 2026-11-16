@@ -178,16 +178,18 @@ def codificar_brfss(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     df["AgeCategory"] = _ordinal(df["AgeCategory"], ORDEM_IDADE, "AgeCategory")
     df["GenHealth"] = _ordinal(df["GenHealth"], ORDEM_SAUDE, "GenHealth")
+    # _texto() e não ``dtype == object``: no pandas 3 as colunas de texto têm
+    # dtype ``str``, e a comparação com object deixaria "Yes"/"No" sem converter.
     binarias = [
         c
         for c in df.columns
-        if c != "alvo" and df[c].dtype == object and set(df[c].unique()) <= {"Yes", "No"}
+        if c != "alvo" and _texto(df[c]) and set(df[c].unique()) <= {"Yes", "No"}
     ]
     for c in binarias:
         df[c] = _sim_nao(df[c], c)
     df["Sex"] = (df["Sex"] == "Male").astype(int)
     df = df.rename(columns={"Sex": "Sex_Male"})
-    multiclasse = [c for c in df.columns if df[c].dtype == object]
+    multiclasse = [c for c in df.columns if _texto(df[c])]
     return pd.get_dummies(df, columns=multiclasse, dtype=int)
 
 
@@ -236,6 +238,11 @@ def resumo(pasta: Path | None = None) -> pd.DataFrame:
 # --------------------------------------------------------------------------- #
 # Auxiliares
 # --------------------------------------------------------------------------- #
+def _texto(s: pd.Series) -> bool:
+    """Coluna de texto, no pandas 2 (object) e no pandas 3 (str)."""
+    return pd.api.types.is_object_dtype(s) or pd.api.types.is_string_dtype(s)
+
+
 def _sim_nao(s: pd.Series, nome: str) -> pd.Series:
     mapa = {"Yes": 1, "No": 0}
     fora = set(s.unique()) - set(mapa)

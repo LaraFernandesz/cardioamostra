@@ -1,13 +1,9 @@
+# O que o painel precisa para rodar (é o que o Streamlit Community Cloud instala).
+# Para desenvolver, testar e refazer os experimentos: pip install -r requirements-dev.txt
 pandas>=2.0
 pyarrow>=14
 numpy>=1.24
 scikit-learn>=1.4
 imbalanced-learn>=0.14
-matplotlib>=3.7
 plotly>=5.18
-pytest>=8
-ruff>=0.5
-jupyter
-nbconvert
-ucimlrepo
-kaggle
+streamlit>=1.50

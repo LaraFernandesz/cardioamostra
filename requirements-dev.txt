@@ -1,0 +1,12 @@
+-r requirements.txt
+matplotlib>=3.7
+pytest>=8
+ruff>=0.5
+mypy>=1.10
+jupyter
+nbconvert
+ucimlrepo
+kaggle
+markdown
+playwright
+-e .
