@@ -42,7 +42,7 @@ class Gravador:
 
     def esperar_tela(self) -> None:
         """Grava enquanto o Streamlit recalcula, até a página ficar parada."""
-        self.pagina.wait_for_selector("h1", timeout=60000)
+        self.pagina.wait_for_selector("#page-title", timeout=60000)
         for _ in range(40):
             self.pausar(0.2)
             if self.pagina.locator("[data-testid='stStatusWidget']").count() == 0:
@@ -60,25 +60,33 @@ def gravar(pasta: Path) -> int:
             navegador = p.chromium.launch()
         pagina = navegador.new_page(viewport={"width": LARGURA, "height": ALTURA})
         pagina.goto(URL)
-        pagina.wait_for_selector(".js-plotly-plot .main-svg", timeout=60000)
+        pagina.wait_for_selector("text=Laboratório de amostragem", timeout=90000)
         g = Gravador(pagina, pasta)
         g.esperar_tela()
         g.pausar(2.0)
 
-        for tecnica in ("Nenhuma correção", "SMOTE", "Subamostragem aleatória", "Ajuste de limiar"):
-            pagina.get_by_text(tecnica, exact=True).first.click()
-            g.esperar_tela()
-            g.pausar(2.2)
+        # Laboratório: cada técnica, com a animação antes → depois
+        for tecnica in ("nenhuma", "smote", "subamostragem", "limiar"):
+            pagina.locator(f'[data-tech="{tecnica}"]').click()
+            g.pausar(0.6)
+            if tecnica in ("smote", "subamostragem"):
+                pagina.locator("#replay").click()
+                g.pausar(3.0)
+            else:
+                g.pausar(1.6)
 
-        pagina.get_by_role("link", name="Comparativo").first.click()
-        g.esperar_tela()
-        g.pausar(4.0)
+        # Comparativo: ranking por recall, depois por Brier, e a calibração
+        pagina.locator('nav a[data-page="comparativo"]').click()
+        g.pausar(3.0)
+        pagina.select_option("#sort", "brier")
+        g.pausar(3.0)
+        pagina.locator(".calibration-panel").scroll_into_view_if_needed()
+        g.pausar(3.0)
 
-        pagina.get_by_role("combobox").first.click()
-        g.pausar(0.8)
-        pagina.get_by_role("option", name="Insuficiência cardíaca").click()
+        # Outra base, já no comparativo
+        pagina.select_option("#base", "insuficiencia")
         g.esperar_tela()
-        g.pausar(3.5)
+        g.pausar(3.0)
         navegador.close()
     return g.n
 

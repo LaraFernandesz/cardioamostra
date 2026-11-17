@@ -6,7 +6,7 @@ mudam a detecção de doença cardíaca e as probabilidades do modelo.
 > **Projeto educativo com dados públicos. Não serve para diagnóstico nem para avaliar o risco
 > de um paciente.**
 
-![Demonstração do painel](figuras/demo.gif)
+![Interface compacta do painel](figuras/interface-integrada-desktop.jpg)
 
 **Painel online:** _link após a publicação no Streamlit Community Cloud_ ·
 **Relatório (PDF, 5 páginas):** [relatorio/relatorio.pdf](relatorio/relatorio.pdf)
@@ -43,6 +43,21 @@ pip install -r requirements-dev.txt  # só o painel: pip install -r requirements
 streamlit run app/painel.py          # o painel (usa os resultados prontos em resultados/)
 python -m pytest                     # testes
 ```
+
+A interface compacta roda no próprio Streamlit (versão 1.56 ou superior), sem Node ou
+servidor frontend separado. Laboratório, Comparativo e Metodologia compartilham a seleção
+de base, modelo e técnica. O comparativo inclui ordenação, exportação CSV e curvas de
+calibração com seus valores por faixa.
+
+O servidor lê os Parquet em `resultados/` e calcula a PCA das amostras, com cache invalidado
+quando os arquivos mudam. O controle antes/depois é uma animação explicativa: não treina
+modelos nem altera as métricas pré-calculadas. Amostras ou curvas ausentes exibem um aviso
+sem impedir a consulta das métricas disponíveis. `CARDIOAMOSTRA_RESULTADOS` permite usar
+outra pasta de resultados.
+
+Os arquivos visuais ficam em `app/interface/`; o contrato de dados, em
+`src/cardioamostra/interface.py`. O protótipo aprovado em `prototipo/` é uma referência
+separada e não é carregado pela aplicação.
 
 Para refazer todos os números do zero:
 
@@ -137,14 +152,16 @@ Para acrescentar uma técnica (ADASYN, Borderline-SMOTE...), basta uma linha em
 ## Estrutura
 
 ```
-src/cardioamostra/   dados, estratégias, experimento, calibração e apresentação (lógica testável)
-app/                 painel Streamlit (telas Laboratório e Comparativo)
+src/cardioamostra/   dados, estratégias, experimento, calibração, apresentação e interface (lógica testável)
+app/                 painel Streamlit (telas Laboratório, Comparativo e Metodologia)
+app/interface/       a interface em HTML, CSS e JS, carregada como componente do Streamlit
+prototipo/           protótipo estático que originou a interface (não é usado pelo painel)
 scripts/             baixar dados, rodar experimentos, analisar, figuras, relatório, GIF
 resultados/          resultados versionados (.parquet e .csv)
 relatorio/           relatório em Markdown e PDF
 figuras/             figuras do README e do relatório
 notebooks/           só exploração (Fase 1)
-tests/               pytest (dados, estratégias, experimento, calibração e painel)
+tests/               pytest (dados, estratégias, experimento, calibração, interface e painel)
 ```
 
 ## Equipe
@@ -154,7 +171,7 @@ tests/               pytest (dados, estratégias, experimento, calibração e pa
 | 1 | Dados (Fases 0 e 1) | `dados.py`, testes de contagem e notebook exploratório |
 | 2 | Experimentos (Fases 2 e 3) | `estrategias.py`, `experimento.py`, teste anti-vazamento e `comparacao.parquet` |
 | 3 | Análise e calibração (Fase 4) | `calibracao.py`, tabela final, conclusões e relatório em PDF |
-| 4 | Painel (Fase 5) | App Streamlit com as telas Laboratório e Comparativo |
+| 4 | Painel (Fase 5) | App Streamlit com as telas Laboratório, Comparativo e Metodologia |
 | 5 | Coordenação, qualidade e comunicação (Fases 0 e 6) | CI, README, GIF e post |
 
 ## Como contribuir

@@ -1,0 +1,131 @@
+/* Revisão 02: densidade compacta. A identidade e os tamanhos de apoio ficam em style.css. */
+.topbar { height: 64px; padding-inline: 28px; gap: 48px; }
+.app-shell { grid-template-columns: 232px minmax(0, 1fr); }
+.sidebar { padding: 20px 18px 16px; }
+.sidebar-title { margin-bottom: 18px; }
+.field-label { margin-bottom: 6px; }
+.dataset-detail { margin-block: 7px; }
+.model-label { margin-top: 17px; }
+.tech-heading { margin-top: 20px; margin-bottom: 3px; }
+.techniques { gap: 2px; }
+.tech-button { padding-block: 6px; }
+.sidebar-note { margin-top: 20px; padding-top: 16px; }
+.sidebar-note > span { margin-top: 5px; }
+.reset { margin-top: 8px; }
+main { padding: 20px 28px 0; }
+.page-intro { margin-bottom: 14px; }
+.page-intro .eyebrow { margin-bottom: 5px; }
+h1 { font-size: 28px; letter-spacing: -.95px; }
+.lead { margin-top: 5px; }
+.context-line { padding-block: 8px; }
+.technique-intro { margin: 16px 0 13px; }
+.technique-intro h2 { font-size: 23px; margin: 3px 0 4px; }
+.lab-grid { gap: 20px; }
+.sample-panel { padding: 14px 16px 12px; }
+.population-bars { margin: 13px 0 10px; }
+.bar-label { margin-bottom: 5px; }
+.plot-wrap { height: 240px; }
+.legend { margin-block: 8px 10px; }
+.transform-control { padding-top: 9px; }
+.plot-note { line-height: 1.45; }
+.results-panel { padding-top: 14px; }
+.results-caption { margin: 6px 0 10px; }
+.metric { padding-block: 9px; gap: 4px 12px; }
+.metric-value { font-size: 28px; }
+.metric-footnote { padding-top: 9px; }
+.compare-link { margin-top: 6px; min-height: 44px; padding-block: 8px; }
+.insight { margin-top: 16px; padding: 12px 16px; gap: 12px; }
+.insight h3 { margin-block: 4px; }
+.impact { padding-block: 21px; gap: 24px; }
+.impact h2 { margin-block: 4px; }
+.impact-heading > p:last-child { margin-block: 6px 0; }
+footer { padding-block: 16px; }
+.comparison-heading { margin-block: 20px; gap: 18px; }
+.comparison-heading h2 { font-size: 22px; margin-block: 0 5px; }
+.comparison-heading p { margin-block: 5px 0; }
+.comparison-explainer { padding-block: 12px; margin-bottom: 4px; }
+th { padding-block: 12px; }
+td { padding-block: 10px; }
+.comparison-footer { padding: 14px 0 24px; }
+.method-intro { margin-block: 22px; }
+.method-intro h2 { font-size: 26px; }
+.method-steps { padding-block: 18px; margin-block: 20px; gap: 22px; }
+.method-steps h3 { margin-block: 6px; }
+.method-steps p { margin-block: 6px 0; }
+.method-details { padding-block: 10px; }
+.method-details summary { min-height: 44px; display: list-item; align-content: center; }
+.source-note { margin-block: 20px; }
+@media (min-width: 1450px) {
+  main { padding-inline: 36px; }
+  .plot-wrap { height: 250px; }
+}
+@media (min-width: 901px) and (max-width: 1150px) {
+  .app-shell { grid-template-columns: 210px minmax(0, 1fr); }
+  .sidebar { padding-inline: 14px; }
+  main { padding-inline: 22px; }
+  .sample-panel { padding-inline: 13px; }
+  .lab-grid { gap: 16px; }
+}
+@media (min-width: 641px) and (max-width: 900px) {
+  .app-shell { grid-template-columns: 190px minmax(0, 1fr); }
+  .sidebar { padding-inline: 12px; }
+  main { padding-inline: 20px; }
+  .topbar { gap: 28px; padding-inline: 20px; }
+  .lab-grid { gap: 16px; }
+  .plot-wrap { height: 240px; }
+  .results-panel { padding-top: 0; }
+  .impact { gap: 12px; }
+}
+@media (max-width: 640px) {
+  .topbar { height: auto; min-height: 88px; padding: 10px 18px 0; gap: 0; }
+  .brand { margin-bottom: 2px; font-size: 19px; }
+  .topbar nav { height: 44px; }
+  .sidebar { padding: 4px 18px; }
+  .sidebar-title { margin: 0; }
+  .sidebar.expanded { padding-bottom: 14px; }
+  .sidebar.expanded .sidebar-title { margin-bottom: 8px; }
+  .sidebar .model-label { margin-top: 0; }
+  .sidebar .tech-heading { margin-top: 12px; }
+  .techniques { gap: 3px; }
+  .tech-button { padding-block: 6px; }
+  main { padding: 17px 18px 0; }
+  h1 { font-size: 26px; letter-spacing: -.8px; }
+  .page-intro { margin-bottom: 12px; gap: 6px; }
+  .page-intro .eyebrow { margin-bottom: 5px; }
+  .lead { margin-top: 5px; }
+  .help-button { margin-top: 10px; }
+  .context-line { padding-block: 7px; gap: 3px 12px; }
+  .technique-intro { margin: 14px 0 11px; }
+  .technique-intro h2 { font-size: 22px; }
+  .sample-panel { padding: 12px; }
+  .population-bars { margin-top: 10px; gap: 12px; }
+  .plot-wrap { height: 225px; }
+  .legend { margin-block: 8px 10px; }
+  .transform-control { padding-top: 8px; }
+  .lab-grid { gap: 18px; }
+  .results-panel { padding-top: 0; }
+  .results-caption { margin-bottom: 8px; }
+  #metrics { display: block; }
+  .metric { grid-template-columns: minmax(0, 1fr) auto; padding-block: 9px; gap: 4px 10px; }
+  .metric-description { max-width: none; }
+  .metric-value { text-align: right; font-size: 28px; }
+  .metric-bottom { flex-direction: row; align-items: center; gap: 6px; }
+  .compare-link { padding-block: 8px; }
+  .insight { display: grid; grid-template-columns: 22px minmax(0, 1fr); margin-top: 16px; padding: 12px; gap: 5px 10px; }
+  .insight > div:nth-child(2) { min-width: 0; }
+  .insight .text-button { grid-column: 2; margin-left: 0; max-width: none; justify-self: start; }
+  .impact { padding-block: 20px; gap: 14px; }
+  .impact h2 { font-size: 22px; }
+  .impact-heading > p:last-child { margin-top: 4px; }
+  .impact-values { gap: 6px; }
+  footer { padding-block: 14px; }
+  .comparison-heading { margin-block: 18px; gap: 12px; }
+  .comparison-heading h2 { font-size: 22px; }
+  .comparison-explainer { gap: 8px; padding-block: 10px; }
+  .method-intro { margin-block: 18px; }
+  .method-intro h2 { font-size: 24px; }
+  .method-steps { gap: 16px; }
+}
+@media (max-width: 420px) {
+  .sidebar .model-label { margin-top: 10px; }
+}

@@ -1,22 +1,22 @@
-# Tema das telas de referência do plano (Interface de referência).
+# Tema alinhado à interface compacta do CardioAmostra.
 [theme]
 base = "light"
-primaryColor = "#B0124F"
-backgroundColor = "#FFFBFA"
+primaryColor = "#9E3151"
+backgroundColor = "#FAF9F6"
 secondaryBackgroundColor = "#FFFFFF"
-textColor = "#1B2236"
-linkColor = "#B0124F"
-borderColor = "#E7E0E1"
-dataframeBorderColor = "#E7E0E1"
-dataframeHeaderBackgroundColor = "#FFFBFA"
+textColor = "#223236"
+linkColor = "#9E3151"
+borderColor = "#E4E3DF"
+dataframeBorderColor = "#E4E3DF"
+dataframeHeaderBackgroundColor = "#FAF9F6"
 showWidgetBorder = true
 baseRadius = "6px"
 font = "Public Sans:https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700;800&display=swap"
 
 [theme.sidebar]
 backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#FFFBFA"
-borderColor = "#E7E0E1"
+secondaryBackgroundColor = "#FAF9F6"
+borderColor = "#E4E3DF"
 
 [client]
 toolbarMode = "minimal"

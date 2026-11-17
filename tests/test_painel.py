@@ -1,8 +1,6 @@
-"""Testes do painel: as duas telas rodam sem erro, sem abrir o navegador.
+"""Contrato do Streamlit; interações JavaScript são verificadas no navegador."""
 
-Usam os arquivos de resultados/ que estão no repositório (pulados se faltarem).
-"""
-
+import json
 import sys
 from pathlib import Path
 
@@ -12,70 +10,51 @@ from streamlit.testing.v1 import AppTest
 
 RAIZ = Path(__file__).resolve().parents[1]
 PAINEL = str(RAIZ / "app" / "painel.py")
-NECESSARIOS = ["tabela_final.parquet", "comparacao.parquet", "calibracao_curvas.parquet"]
-
-pytestmark = pytest.mark.skipif(
-    not all((RAIZ / "resultados" / n).exists() for n in NECESSARIOS),
-    reason="resultados/ ainda não foi gerado (python scripts/refazer_tudo.py)",
-)
 
 
 @pytest.fixture(autouse=True)
-def painel_limpo(monkeypatch):
-    """Cada teste começa sem cache e relê comum.py (que guarda a pasta de resultados)."""
+def ambiente(monkeypatch):
     monkeypatch.delenv("CARDIOAMOSTRA_RESULTADOS", raising=False)
-    st.cache_data.clear()
-    sys.modules.pop("comum", None)
+    for nome in ("comum", "interface"):
+        sys.modules.pop(nome, None)
     yield
-    st.cache_data.clear()
-    sys.modules.pop("comum", None)
+    for nome in ("comum", "interface"):
+        sys.modules.pop(nome, None)
 
 
-def abrir() -> AppTest:
+def abrir():
     return AppTest.from_file(PAINEL, default_timeout=120).run()
 
 
-def test_laboratorio_abre_com_smote_na_brfss():
+@pytest.mark.skipif(
+    not (RAIZ / "resultados/tabela_final.parquet").exists(), reason="resultados não gerados"
+)
+def test_tres_paginas_recebem_resultados_reais_e_preservam_selecao():
     at = abrir()
     assert not at.exception
-    assert at.title[0].value == "SMOTE na base BRFSS 2020"
     assert not at.error
-
-
-@pytest.mark.parametrize("base", ["brfss", "insuficiencia", "cleveland"])
-def test_laboratorio_todas_as_tecnicas(base):
-    at = abrir()
-    at.sidebar.selectbox[0].set_value(base).run()
-    for tecnica in at.sidebar.radio[0].options:
-        at.sidebar.radio[0].set_value(tecnica).run()
-        assert not at.exception, (base, tecnica)
-        assert not at.error, (base, tecnica)
-
-
-def test_comparativo_abre_e_ordena():
-    at = abrir()
-    at.switch_page("comparativo.py").run()
-    assert not at.exception
-    assert at.title[0].value == "Mesmo recall, probabilidades diferentes"
-    for metrica in at.sidebar.selectbox[2].options:
-        at.sidebar.selectbox[2].set_value(metrica).run()
+    componente = at.get("bidi_component")[0]
+    dados = json.loads(componente.proto.json)
+    assert dados["page"] == "laboratorio"
+    assert len(dados["resultados"]) == 42
+    assert len(dados["curvas"]) == 420
+    assert componente.proto.isolate_styles
+    selecao = {"base": "cleveland", "model": "gradient_boosting", "technique": "pesos"}
+    at.session_state["cardio_selection"] = selecao
+    for pagina in ("comparativo", "metodologia", "laboratorio"):
+        at.switch_page(f"{pagina}.py").run()
         assert not at.exception
-    comparar = next(s for s in at.selectbox if s.label.startswith("Comparar"))
-    for tecnica in comparar.options:
-        comparar.set_value(tecnica).run()
-        assert not at.exception
+        dados = json.loads(at.get("bidi_component")[0].proto.json)
+        assert dados["page"] == pagina
+        assert dados["initial"] == selecao
 
 
-def test_escolha_da_base_vale_nas_duas_telas():
-    at = abrir()
-    at.sidebar.selectbox[0].set_value("cleveland").run()
-    at.switch_page("comparativo.py").run()
-    assert at.sidebar.selectbox[0].value == "cleveland"
-
-
-def test_arquivo_ausente_diz_qual_comando_rodar(tmp_path, monkeypatch):
+def test_arquivo_ausente_diz_como_recuperar(tmp_path, monkeypatch):
     monkeypatch.setenv("CARDIOAMOSTRA_RESULTADOS", str(tmp_path))
+    st.cache_data.clear()
     at = abrir()
     assert not at.exception
     assert "tabela_final.parquet" in at.error[0].value
     assert "scripts/analisar.py" in at.code[0].value
+    assert at.button[0].label == "Tentar novamente"
+    assert not at.get("bidi_component")
