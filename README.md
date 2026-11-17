@@ -8,7 +8,7 @@ mudam a detecção de doença cardíaca e as probabilidades do modelo.
 
 ![Interface compacta do painel](figuras/interface-integrada-desktop.jpg)
 
-**Painel online:** _link após a publicação no Streamlit Community Cloud_ ·
+**Painel online:** [https://cardioamostra-8h6d8kmb9qysg4yrafgyz9.streamlit.app/](https://cardioamostra-8h6d8kmb9qysg4yrafgyz9.streamlit.app/) ·
 **Relatório (PDF, 5 páginas):** [relatorio/relatorio.pdf](relatorio/relatorio.pdf)
 
 ## O que descobrimos

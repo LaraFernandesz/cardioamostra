@@ -1,5 +1,4 @@
-<!-- Texto do post (LinkedIn ou blog). Anexar figuras/recall_brier.png ou figuras/demo.gif.
-     Trocar [LINK DO PAINEL] pelo endereço do Streamlit Community Cloud antes de publicar. -->
+<!-- Texto do post (LinkedIn ou blog). Anexar figuras/recall_brier.png ou figuras/demo.gif. -->
 
 SMOTE encontra mais doentes. Mas a que custo?
 
@@ -16,7 +15,7 @@ E um achado que não esperávamos: SMOTE com gradient boosting quase não funcio
 
 Para um modelo de risco, a probabilidade importa tanto quanto acertar quem é doente. Antes de reamostrar, vale testar o limiar.
 
-O painel mostra tudo lado a lado, técnica por técnica: [LINK DO PAINEL]
+O painel mostra tudo lado a lado, técnica por técnica: https://cardioamostra-8h6d8kmb9qysg4yrafgyz9.streamlit.app/
 Código, relatório e dados: https://github.com/LaraFernandesz/cardioamostra
 
 Projeto educativo, sem valor diagnóstico.
