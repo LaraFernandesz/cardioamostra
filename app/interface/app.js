@@ -71,7 +71,7 @@ export default function(component) {
   }
   function renderMetrics(r,b) {
     const death=state.base==='insuficiencia';
-    const metrics=[['recall','Recall',death?'Óbitos identificados':'Casos positivos encontrados',2],['precisao','Precisão','Alertas que eram positivos',2],['roc_auc','ROC-AUC','Capacidade de ordenar',3],['brier','Brier','Erro das probabilidades · menor é melhor',3]];
+    const metrics=[['recall','Recall',death?'Óbitos identificados':'Casos positivos encontrados',2],['precisao','Precisão',death?'Alertas que eram óbito':'Alertas que eram positivos',2],['roc_auc','ROC-AUC','Capacidade de ordenar',3],['brier','Brier','Erro das probabilidades · menor é melhor',3]];
     $('metrics').innerHTML=metrics.map(([key,name,desc,digits])=>{
       const delta=r[key]-b[key], equal=Number(Math.abs(delta).toFixed(digits))===0;
       const good=key==='brier'?delta<0:delta>0;
